@@ -9,6 +9,7 @@ There is a lot of APIs available, but of course one of the most important is JDA
 * NASA
 * FiveM
 * Lavaplayer
+* IP Validation powered by [IP Intelligence](http://getipintel.net/)
 ## AI
 One of the cool things is that the bot has access to AI characters so it can chat with everyone. I'm currently using ready conversational model since I had some trouble with creating my own because something was wrong with a code. In the future, I'm planning to implement and train my own model. To chat with AI all you need to do is place `&` symbol before your message, like: `& how you doing?`
 ## Worth seeing
