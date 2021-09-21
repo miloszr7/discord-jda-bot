@@ -1,8 +1,10 @@
+package config;
+
 import java.sql.*;
 
 public class DatabaseConnection {
 
-    private Connection connection ;
+    private Connection connection;
 
     public DatabaseConnection() {
         try {
