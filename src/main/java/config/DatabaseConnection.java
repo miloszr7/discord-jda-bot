@@ -1,13 +1,19 @@
-package config;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DatabaseConnection {
 
+    private Connection connection ;
+
+    public DatabaseConnection() {
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void connect() {
+
         Connection connection = null;
 
         try {
@@ -33,16 +39,25 @@ public class DatabaseConnection {
 
     public void query(String SQL) throws Exception {
 
-        String URL = "jdbc:sqlite:database.db";
-
-        Connection connection = DriverManager.getConnection(URL);
-
         Statement query = connection.createStatement();
 
         query.executeUpdate(SQL);
 
-        connection.close();
+    }
+
+    public void openConnection() throws Exception {
+        connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+    }
+
+    public ResultSet resultSet(String query) throws Exception {
+
+        Statement st = connection.createStatement();
+
+        return st.executeQuery(query);
 
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
 }
