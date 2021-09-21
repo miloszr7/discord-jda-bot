@@ -17,8 +17,8 @@ import java.util.Set;
 
 // DISPLAY PLAYER'S INVENTORY + COUNT DUPLICATED ITEMS
 public class InventoryCore extends ListenerAdapter {
-
-    private final String url = "jdbc:sqlite:database.db";
+    
+    private DatabaseConnection connection = null;
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
@@ -27,13 +27,9 @@ public class InventoryCore extends ListenerAdapter {
 
             if (event.getMessage().getContentRaw().equalsIgnoreCase("$inventory")) {
 
-                Connection connection = DriverManager.getConnection(url);
-
-                Statement st = connection.createStatement();
-
                 String query = "SELECT * FROM inventory WHERE userID = " + event.getAuthor().getIdLong() + " ";
 
-                ResultSet resultSet = st.executeQuery(query);
+                ResultSet resultSet = connection.resultSet(query);
 
                 StringBuilder builder = new StringBuilder();
 
@@ -45,13 +41,12 @@ public class InventoryCore extends ListenerAdapter {
                 ArrayList<String> itemList = new ArrayList<>();
 
                 while (resultSet.next()) {
-
                     itemList.add(resultSet.getString("itemName"));
-
                 }
 
-                // close connection
-                connection.close();
+                // close connection and result
+                resultSet.close();
+                connection.getConnection().close();
 
                 // Place our items inside HashMap, add number to each one
                 HashMap<String, Integer> nameAndCount = new HashMap<>();
