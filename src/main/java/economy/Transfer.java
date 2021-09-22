@@ -1,5 +1,6 @@
 package economy;
 
+import config.DatabaseConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -7,15 +8,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.concurrent.TimeUnit;
 
 public class Transfer extends ListenerAdapter {
-
-    public BankingSystem bankingSystem = new BankingSystem();
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
@@ -23,67 +18,58 @@ public class Transfer extends ListenerAdapter {
         String[] command = event.getMessage().getContentRaw().split(" ");
 
         if (command.length == 3 && command[0].equalsIgnoreCase("$pay")) {
-            event.getMessage().delete().queue();
 
             Member mentioned = event.getMessage().getMentionedMembers().get(0);
 
-            long TargetNumber = mentioned.getIdLong();
-
-            long AccountNumber = event.getAuthor().getIdLong();
-
-            int amount = Integer.parseInt(command[2]);
+            long targetNumber = mentioned.getIdLong();
+            long accountNumber = event.getAuthor().getIdLong();
 
             try {
 
-                String url = "jdbc:sqlite:database.db";
-                Connection connection = DriverManager.getConnection(url);
+                int amount = Integer.parseInt(command[2]);
 
-                Statement st = connection.createStatement();
+                DatabaseConnection connection = new DatabaseConnection();
 
-                String check = "SELECT Balance FROM bank WHERE AccountNumber = " + AccountNumber + " ";
+                ResultSet selectBalance = connection.resultSet("SELECT Balance FROM bank WHERE AccountNumber = "+ accountNumber +"");
 
-                ResultSet resultSet = st.executeQuery(check);
+                int userBalance = 0;
 
-                String CurrentBalance = "";
-
-                while (resultSet.next()) {
-                    CurrentBalance = resultSet.getString("Balance");
+                while (selectBalance.next()) {
+                    userBalance = selectBalance.getInt("Balance");
                 }
 
-                if (Integer.parseInt(CurrentBalance) >= amount) {
+                selectBalance.close();
 
-                    String sql = "SELECT sum(Balance) - " + amount + " FROM bank WHERE AccountNumber = " + AccountNumber + " "; // Remove money
+                if (userBalance >= amount) {
 
-                    String sql2 = "UPDATE bank SET Balance = Balance - " + amount + " WHERE AccountNumber = " + AccountNumber + " "; // Update balance
+                    String transaction = "BEGIN TRANSACTION;" +
+                            "UPDATE bank SET Balance = Balance - "+amount+" WHERE AccountNumber = "+accountNumber+";" +
+                            "UPDATE bank SET Balance = Balance + "+amount+" WHERE AccountNumber = "+targetNumber+";" +
+                            "COMMIT;";
 
-                    String sql3 = "UPDATE bank SET Balance = Balance + " + amount + " WHERE AccountNumber = " + TargetNumber + " "; // Transfer to someone
-
-                    st.executeUpdate(sql);
-                    st.executeUpdate(sql2);
-                    st.executeUpdate(sql3);
+                    connection.query(transaction);
+                    connection.getConnection().close();
 
                     event.getChannel().sendMessage(
                             new EmbedBuilder()
                                     .setColor(Color.decode("#4153FF"))
-                                    .setDescription(":receipt: " + event.getAuthor().getAsMention() + " you've transferred $**" + amount + "** to " + mentioned.getAsMention())
+                                    .setDescription(":receipt: You have transferred **$" + MoneyFormat.comaFormat(amount) + "** to **" + mentioned.getUser().getAsTag() + "**")
                                     .build()
                     ).queue();
 
-                    connection.close();
-
-                } else if (Integer.parseInt(CurrentBalance) < amount) {
+                } else if (userBalance < amount) {
 
                     event.getChannel().sendMessage(
                             new EmbedBuilder()
                                     .setColor(Color.decode("#4153FF"))
-                                    .setDescription(":name_badge: " + event.getAuthor().getAsMention() + " you don't have enough money to make transfer.")
+                                    .setDescription("You don't have enough money to make a transfer.")
                                     .build()
-                    ).complete().delete().queueAfter(5, TimeUnit.SECONDS);
+                    ).queue();
 
                 }
 
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println("[Bank Transfer] :: " + e.getMessage());
             }
 
         }

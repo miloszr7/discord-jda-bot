@@ -9,7 +9,7 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 
 public class MoneyFormat {
-    private final NavigableMap<Long, String> suffixes = new TreeMap<>(); {
+    private static final NavigableMap<Long, String> suffixes = new TreeMap<>(); {
         suffixes.put(1_000L, "k");
         suffixes.put(1_000_000L, "M");
         suffixes.put(1_000_000_000L, "B");
@@ -18,7 +18,7 @@ public class MoneyFormat {
         suffixes.put(1_000_000_000_000_000_000L, "E");
     }
 
-    public String letterFormat(long value) {
+    public static String letterFormat(long value) {
 
         if (value == Long.MIN_VALUE) return letterFormat(Long.MIN_VALUE + 1);
         if (value < 0) return "-" + letterFormat(-value);
@@ -33,7 +33,7 @@ public class MoneyFormat {
         return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 
-    public String comaFormat(long value) {
+    public static String comaFormat(long value) {
         DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
         DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();
 
