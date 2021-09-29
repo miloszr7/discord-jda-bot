@@ -7,6 +7,22 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class Permissions extends ListenerAdapter {
+    
+    //
+    
+    public static boolean hasRequiredPermission(GuildMessageReceivedEvent event, Permission permission) {
+
+        Member member = event.getMember();
+
+        if (!member.hasPermission(permission)) {
+            event.getChannel().sendMessage("You need **" +permission.getName()+ "** permission to use this command.").queue();
+            return false;
+        }
+
+        return true;
+    }
+    
+    //
 
     public boolean ADMINISTRATOR(Member member) {
         return member.hasPermission(Permission.ADMINISTRATOR);
