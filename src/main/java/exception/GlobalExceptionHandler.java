@@ -5,8 +5,8 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public class GlobalExceptionHandler {
 
-    private static final String serverId = "568836899980967948";
-    private static final String textChannelId = "884489491652419624";
+    private static final String serverId = "";
+    private static final String textChannelId = "";
 
     /**
      * Handle normal exception without discord interaction.
