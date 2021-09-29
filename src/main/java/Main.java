@@ -36,48 +36,8 @@ public class Main extends ListenerAdapter {
         
         JDABuilder JDA = JDABuilder.createDefault(tokenDEV);
 
+        // add listeners to enable commands
         JDA.addEventListeners(new Main());
-        JDA.addEventListeners(new YouTube());
-        JDA.addEventListeners(new ClearChatMessages());
-        JDA.addEventListeners(new Slowmode());
-        JDA.addEventListeners(new ChangeNickname());
-        JDA.addEventListeners(new HackBan());
-        JDA.addEventListeners(new SearchForMember());
-        JDA.addEventListeners(new ShowServerBans());
-        JDA.addEventListeners(new CleanMessages());
-        JDA.addEventListeners(new Report());
-        JDA.addEventListeners(new CheckIPAddress());
-        JDA.addEventListeners(new KickMember());
-        JDA.addEventListeners(new BanMember());
-        JDA.addEventListeners(new ChangeActivity());
-        JDA.addEventListeners(new UnbanMember());
-        JDA.addEventListeners(new MemberPermissions());
-        JDA.addEventListeners(new ShowEmotes());
-        JDA.addEventListeners(new ShowCommands());
-        JDA.addEventListeners(new DisplayMemberAvatar());
-        JDA.addEventListeners(new dice());
-        JDA.addEventListeners(new eightBall());
-        JDA.addEventListeners(new Ping());
-        JDA.addEventListeners(new GIPHY());
-        JDA.addEventListeners(new FlipCoin());
-        JDA.addEventListeners(new AccountCreation());
-        JDA.addEventListeners(new BankingSystem());
-        JDA.addEventListeners(new Invitation());
-        JDA.addEventListeners(new SendDiscordInvitation());
-        JDA.addEventListeners(new MuteMember());
-        JDA.addEventListeners(new Announce());
-        JDA.addEventListeners(new FiveM());
-        JDA.addEventListeners(new LoadPrivateMessages());
-        JDA.addEventListeners(new Cooldown());
-        JDA.addEventListeners(new Vote());
-        JDA.addEventListeners(new ShowEmoji());
-        JDA.addEventListeners(new ServerTracker());
-        JDA.addEventListeners(new VendingMachine());
-
-        JDA.addEventListeners(new HostileTakeover());
-
-        JDA.addEventListeners(new Respond());
-        JDA.addEventListeners(new CharacterCore());
 
         JDA.build();
 
@@ -88,12 +48,9 @@ public class Main extends ListenerAdapter {
     public void onReady(@NotNull ReadyEvent event) {
 
         System.out.println("=====================================");
-        System.out.println("DISCORD 'GLaDOS' BOT");
-        System.out.println("\u00A9 2021 All rights reserved.");
+        System.out.println("DISCORD BOT");
         System.out.println("Author: https://github.com/miloszr7");
         System.out.println("=====================================");
-
-        DatabaseConnection.connect();
 
     }
 }
